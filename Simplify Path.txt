@@ -1,0 +1,53 @@
+#include <iostream>
+#include <sstream>
+#include <stack>
+#include <vector>
+
+using namespace std;
+
+class Solution {
+public:
+    string simplifyPath(string path) {
+        // Split the path into components using '/' as the delimiter
+        vector<string> components;
+        stringstream ss(path);
+        string component;
+        while (getline(ss, component, '/')) {
+            components.push_back(component);
+        }
+
+        stack<string> canonicalPath;
+        
+        // Process each component
+        for (const string& comp : components) {
+            if (comp.empty() || comp == ".") {
+                // Ignore empty components and '.'
+                continue;
+            } else if (comp == "..") {
+                // Go up one level by popping from the stack
+                if (!canonicalPath.empty()) {
+                    canonicalPath.pop();
+                }
+            } else {
+                // Push valid directory names onto the stack
+                canonicalPath.push(comp);
+            }
+        }
+
+        // Build the simplified canonical path from the stack
+        string simplifiedPath = "";
+        while (!canonicalPath.empty()) {
+            simplifiedPath = "/" + canonicalPath.top() + simplifiedPath;
+            canonicalPath.pop();
+        }
+        
+        // Handle the case of an empty path
+        if (simplifiedPath.empty()) {
+            simplifiedPath = "/";
+        }
+
+        return simplifiedPath;
+    }
+};
+
+
